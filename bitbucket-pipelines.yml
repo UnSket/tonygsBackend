@@ -1,0 +1,47 @@
+image: maven:3.3.9
+
+pipelines:
+  branches:
+    master:
+      - step:
+          caches:
+            - maven
+          script:
+            - mvn clean package -P prod
+            - ssh centos@54.194.136.97 sudo systemctl stop projectcontrol.service
+            - scp -r /opt/atlassian/pipelines/agent/build/target/projectcontrol-*.jar centos@54.194.136.97:/usr/project-control/projectcontrol.jar
+            - ssh centos@54.194.136.97 sudo systemctl start projectcontrol.service
+            - ssh centos@54.194.136.97 sudo systemctl status projectcontrol.service
+    develop:
+      - step:
+          caches:
+            - maven
+          script:
+            - mvn clean package -P prod
+            - ssh centos@54.194.136.97 sudo systemctl stop projectcontrol.service
+            - scp -r /opt/atlassian/pipelines/agent/build/target/projectcontrol-*.jar centos@54.194.136.97:/usr/project-control/projectcontrol.jar
+            - ssh centos@54.194.136.97 sudo systemctl start projectcontrol.service
+            - ssh centos@54.194.136.97 sudo systemctl status projectcontrol.service
+    feature/*:
+      - step:
+              name: Angular
+              image: node:8.9.4
+              script:
+                - mkdir ~/.npm-global
+                - npm config set prefix '~/.npm-global'
+                - echo "export PATH=~/.npm-global/bin:$PATH" >> ~/.profile
+                - npm run build --prefix src/main/webapp/hakaton/
+              artifacts:
+                - dist/**
+      - step:
+          image: maven:3.3.9
+          caches:
+            - maven
+          script:
+            - mvn clean package -P prod
+  default:
+      - step:
+          caches:
+            - maven
+          script:
+            - mvn clean package -P prod
