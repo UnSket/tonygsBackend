@@ -26,7 +26,7 @@ spring:
         show-sql: true
 
 server:
-    port: 9797
+    port: 9393
     compression:
         enabled: true
         mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
