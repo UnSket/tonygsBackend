@@ -1,0 +1,3 @@
+[submodule "src/main/webapp/tonygs"]
+	path = src/main/webapp/tonygs
+	url = https://github.com/UnSket/tonygs.git
