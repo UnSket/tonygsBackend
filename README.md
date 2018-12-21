@@ -2,3 +2,5 @@
 
 # How to run:
     mvn spring-boot:run
+    
+webapp as git submodule
